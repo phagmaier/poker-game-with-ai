@@ -1,0 +1,24 @@
+                                                        TODO
+------------------------------------------------------------------------------------------------------------------------
+2. MAKE SURE EVERYTHING IS RESET IN THE REST FUNCTION
+3. CLEANUP CLASSES GROUP FUNCTION TOGETHER ESPECIALLY IN GAME
+4. TEST TO MAKE SURE EVRYTHING WORKS
+5. DOUBLE CHECK THAT POTS SPLIT POTS AND PAYOUTS WORK
+6. MAKE SURE REST WORKS AND THAT WE ARE 
+7. Add the visuals
+8. Rename the files or maybe create new files where these changes occur 
+                                                        
+
+                                                        NOTES
+------------------------------------------------------------------------------------------------------------------------
+1. Mark all files blue after they have been changed and tested 
+
+
+
+
+
+
+
+
+
+
