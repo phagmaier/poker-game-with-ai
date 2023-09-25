@@ -1,10 +1,12 @@
 # poker-game-with-ai:
-NOTE: The project is in its early stages and not completed. 
+### NOTE: 
+The project is in its early stages and not completed. 
+## summary:
 Creating a console poker game that you can practice against by playing against a bot
 Not finished yet in preliminary stages. 
 The goal is to create a poker game you can play in terminal and then essentially create a fairly decent poker solver that a player can chose to play against as an adversary to practice against. Another goal is just to have the solver as a seperate thing all together so you can run poker sims and see the optimal course of action to take. If all that goes well I may try to make it a website depending on how well this goes.
 
-# TO-DO:
+## TO-DO:
 1. general error testing
 2. Make sure split pots are working correctly
 3. Add functionality to add to stack remove players automatically remove player when stack == 0 etc..
