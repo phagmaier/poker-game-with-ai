@@ -125,8 +125,13 @@ class Player:
 		return True,self.wagered, True, True, f"All in! for {self.wagered}"
 
 	def call(self, amount):
+		#also have to check to make sure not all in for now just test to make sure this works
 		if self.is_sb and not amount:
-			amount = self.bb - self.sb
+			if self.bb < self.stack: 
+				self.wagered = self.bb
+				return True, None, False,True, f"Call {self.wagered}"
+			else:
+				self.all_in() 
 		if amount >= self.stack:
 			return self.all_in()
 		else:

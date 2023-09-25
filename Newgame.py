@@ -12,7 +12,7 @@ class Game:
 		self.dealer = Dealer(num_players)
 		self.community_cards = []
 		self.pot = 0
-		self.player_bets = []
+		self.player_bets = [0 for i in range(num_players)]
 		self.sb_posted = 0
 		self.bb_posted = 0
 		self.bb = bb
@@ -337,7 +337,7 @@ class Game:
 				bet, self.all_in[current],self.in_hand[current], action_taken = \
 				self.players[current].get_action(prev_bet,self.pot)
 				print()
-				print(f"Player {current}: {action_taken}")
+				print(f"Player {current+1}: {action_taken}")
 				print()
 				if bet:
 					self.player_bets[current] = bet
@@ -349,6 +349,9 @@ class Game:
 
 			current += 1 if current+1 < self.num_players else -current
 			count +=1
+
+		for i in self.players:
+			i.collect()
 
 if __name__ == '__main__':
 	game = Game()
