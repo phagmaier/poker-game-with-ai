@@ -69,7 +69,7 @@ class Dealer:
 		self.flush_count[new.suit] += 1
 		self.value_count[new.value] += 1
 		if self.value_count[new.value] > 1:
-				self.board_pairs[i.value] = self.value_count[i.value]
+				self.board_pairs[new.value] = self.value_count[new.value]
 		return self.deck[self.pos]
 
 	def get_poss_flush(self):
