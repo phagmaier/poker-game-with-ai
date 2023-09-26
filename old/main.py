@@ -1,4 +1,4 @@
-from game import Game
+from Newgame import Game
 
 if __name__ == '__main__':
 	#num_players = int(input("How many players: "))

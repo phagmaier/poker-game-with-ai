@@ -13,15 +13,6 @@ class Dealer:
 		self.value_count = {i:0 for i in range(2,15)}
 		self.board_pairs = {}
 		self.community = None
-		#self.straights = self.make_straights()
-		#self.dealt = [] -> should probably keep trakc of values dealt
-
-	def get_flush_suit(self):
-		maxx = 0
-		for i,x in zip(self.flush_count.keys(), self.flush_count.items()):
-			if x >= 3:
-				return i
-		return False
 
 	def make_deck(self):
 		suits = ['S', 'C', 'D', 'H']
@@ -31,12 +22,6 @@ class Dealer:
 			for val in values:
 				deck.append(Card(suit,val))
 		return deck
-
-	def get_value_count(self):
-		return self.value_count
-
-	def get_board_pairs(self):
-		return board_pairs
 
 	def deal_preflop(self):
 		random.shuffle(self.deck)
@@ -72,11 +57,21 @@ class Dealer:
 				self.board_pairs[new.value] = self.value_count[new.value]
 		return self.deck[self.pos]
 
+	def get_value_count(self):
+		return self.value_count
+
+	def get_board_pairs(self):
+		return self.board_pairs
+
 	def get_poss_flush(self):
 		for i in self.flush_count:
 			if self.flush_count[i] >=3:
 				return i, self.flush_count[i]
 		return None, None
+
+	
+
+
 
 
 		

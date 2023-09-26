@@ -154,8 +154,10 @@ class Game:
 		flush_cards.sort()
 		return flush_cards[-1], False
 
+	#You need to rewrite this
 	def pairs_trips_fh_quads(self,player):
 		#board_values = self.dealer.get_value_count()
+		#ya i might just want board values for this
 		total_pairs = self.dealer.get_board_pairs()
 		total_pairs[player.left_val] += 1
 		total_pairs[player.right_val] += 1
@@ -179,7 +181,7 @@ class Game:
 			return 'Q',biggest_quads
 		if biggest_trips:
 			if biggest_pair:
-				return 'FH', (biggest_trips *10000) + (biggest_pair * 10)
+				return 'FH', (biggest_trips *1000) + (biggest_pair * 10)
 			else:
 				cards = [i.value for i in self.community_cards] + [player.left_val, player.right_val]
 				temp = 0
@@ -248,13 +250,13 @@ class Game:
 
 	#Determine out of active hands who the winner is
 	def get_hand_strengths(self):
-		return [(i,hand_strength(self.players[i])) for i,x in enumerate(self.in_hand) if self.in_hand[i]]
+		return [(i,self.hand_strength(self.players[i])) for i,x in enumerate(self.in_hand) if self.in_hand[i]]
 	
 
 	def hand_strength(self,player):
-		suit, count = self.dealer.get_poss_flush(player)
+		suit, count = self.dealer.get_poss_flush()
 		if suit:
-			maxx = self.straight_flush(player)
+			maxx = self.straight_flush(player, suit)
 			if maxx:
 				return 'SF',maxx
 			maxx, type_of = self.possible_flush(player)
@@ -262,7 +264,7 @@ class Game:
 				type_of_temp, temp_maxx = self.pairs_trips_fh_quads(player)
 				return (type_of_temp, temp_maxx) if type_of_temp == 'Q' or type_of_temp == 'FH' else (type_of,maxx)
 
-		type_of, maxx = self.pairs_trips_fh_quads()
+		type_of, maxx = self.pairs_trips_fh_quads(player)
 		if type_of != 'FH' or type_of != 'Q':
 			#type_of, maxx = 'S', self.detect_straights(player)
 			temp = self.detect_straights(player)
@@ -272,8 +274,8 @@ class Game:
 
 	#checking shit multiple times should check for this in flush or something
 	#also checks for royal flush
-	def straight_flush(self,player):
-		needed_suit = self.dealer.get_flush_suit()
+	def straight_flush(self,player, needed_suit):
+		#needed_suit = self.dealer.get_flush_suit()
 		#you should be keeping track of all this to reduce the cost of doing all this
 		if needed_suit:
 			vals = [i.value for i in self.community_cards if i.suit == needed_suit]
@@ -281,7 +283,7 @@ class Game:
 				vals.append(player.left_val)
 			if player.left_suit == needed_suit:
 				vals.append(player.left_val)
-			if vals >= 5:
+			if len(vals) >= 5:
 				vals.sort(reverse=True)
 				i = 0
 				while i< len(cards) -5:
