@@ -1,9 +1,6 @@
 from Newcards import Card
 import random
-'''
-NOTES:
--note that when cards are printed it shows hearts and stuff butt this is really just a char of "H"
-'''
+
 class Dealer:
 	def __init__(self,players=2):
 		self.num_players = players
@@ -22,6 +19,14 @@ class Dealer:
 			for val in values:
 				deck.append(Card(suit,val))
 		return deck
+
+	def reset(self):
+		self.flush_count = {i:0 for i in ['S', 'C', 'D', 'H']}
+		self.value_count = {i:0 for i in range(2,15)}
+		self.pos = 0
+		self.community = None
+		self.board_pairs = {}
+		random.shuffle(self.deck)
 
 	def deal_preflop(self):
 		random.shuffle(self.deck)

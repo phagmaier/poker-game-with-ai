@@ -77,57 +77,59 @@ class Game:
 			i = 0
 			while not self.in_hand[i]:
 				i+=1
-			self.payout(self.in_hand[i])
+			self.payout(self.players[i])
 		else:
 			self.flush_suit, self.flush_count = self.dealer.get_poss_flush()
 			hand_strengths = self.get_hand_strengths()
 			self.payout(hand_strengths,True)
-
+	'''
+	ask players if they want to reload and if players who busted want to rejoin
+	if a player busts and doesn't rejoin make sure to change self.numplayers 
+	Basically kick out broke players if they don't rejoin ask them 
+	also if player adds have to find way to account for that don't care for now
+	'''
 	def reset(self):
 		self.community_cards = []
 		self.pot = 0
 		self.player_bets = []
 		self.in_hand = [True for _ in range(num_players)]
 		self.all_in = [False for _ in range(num_players)]
-		#need to check if anyone went broke and if so if they want to join
-		#also want to ask broke players or any players with less than starting stacks
-		#if they want to add back on 
+		self.player_bets = [0 for _ in range(self.num_players)]
+		self.dealer.reset()
 		self.change_blinds()
-		#maybe other stuff
 
-	#just pass winning player and 
-	def payout(self,players, multiple=False):
+	def payout(self,players,multiple=False):
 		if not multiple:
-			self.players[player].stack += self.pot
-			self.reset()
+			players.stack += self.pot
+			return self.reset()
+		players_in_hand = sum(self.in_hand)
+		
+		while players_in_hand:
+			if players_in_hand == 1:
+				#just give the rest of the pot to the player
+				for i,_ in players:
+					if self.in_hand[i] == True:
+						self.players[i].stack += self.pot
+						return self.reset()
+						#self.in_hand[i] = False
+			else:
+				#side_pot = min([players[1] for i in players]) * dont_stop
+				min_bet = min([self.player_bets[i] for i,_ in players if self.in_hand[i]])
+				side_pot = min_bet * players_in_hand
+				self.pot -= side_pot
+				best_hand = max(i for x,i in players if self.in_hand[x])
+				indexes = [i for i,x in players if self.in_hand[i] and x == best_hand]
+				winnings = side_pot/len(indexes)
+				for index,_ in players:
+					if index in indexes:
+						self.players[index].stack += winnings
+					elif self.in_hand[index]:
+						self.players[index].stack -= min_bet
 
-		#look atyour algo
-		can_win = sum(self.in_hand)
-		while can_win:
-			players = sorted([players[i] for i in range(len(players)) if self.in_hand[i]], 
-				key=lambda x: x[1])
-
-			min_stack = min([self.player_bets[i] for i in range(self.num_players) if self.in_hand[i]])
-			side_pot = min_sack * can_win
-			self.pot -= side_pot #think this is right not 100% but 90% sure
-			best_hand = players[-1]
-			winners = [self.players[i[0]] for i in players if i[0] == best_hand]
-			for p in winners:
-				side_pot/len(winners)
-			for player in players:
-				self.players[player].stack -= min_stack
-				if self.players[player].stack == 0:
-					self.in_hand[player] = False
-			if sum(self.in_hand) == 1:
-				i = 0
-				stop = False
-				while not stop:
-					if self.in_hand[i]:
-						#Not sure if this will work
-						self.players[i].stack += self.pot	
-						stop = True
-					i+=1
-		self.reset()		
+					self.player_bets[index] -= min_bet
+					self.in_hand[index] = False if self.player_bets[index] == 0 else True
+			
+			players_in_hand = sum(self.in_hand)	
 
 	def create_straights(self):
 		straights = [[i for i in range(i,i+5)][::-1] for i in range(1,11)]
@@ -135,13 +137,9 @@ class Game:
 		return straights
 
 
-	#Determine out of active hands who the winner is
 	def get_hand_strengths(self):
 		return [(i,self.hand_strength(self.players[i])) for i,x in enumerate(self.in_hand) if self.in_hand[i]]
 	
-	#MAYBE IN THE FUTURE OR FOR ERROR CHECKING PURPOSES YOU ALSO WANT TO DISPLAY THE 5
-	#CARDS YOU WON WITH THIS WOULD BE ANNOYING AND TEDIOUS TO ADD BUT EASILY DOABLE 
-	#JUST A NOTE TO SELF
 	def hand_strength(self,player):
 		flush = self.flush(player)
 		if flush > self.hand_rankings['SF']:
@@ -165,7 +163,7 @@ class Game:
 				return pairs, "TRIPS"
 			if pairs > self.hand_rankings['TP']:
 				return pairs, "TWO PAIR"
-			return pairs "PAIR"
+			return pairs, "PAIR"
 		return self.high_card(player), "HIGH CARD"	
 	
 	def _pair(self,player):
@@ -182,7 +180,7 @@ class Game:
 			for i in board_pairs:
 				quads = i if board_pairs[i] == 4 and i > quads else quads
 				trips = i if board_pairs[i] == 3 and i > trips else trips
-				a_pair += [i] if board_pairs[i] == 2 and i > a_pair else []
+				a_pair += [i] if board_pairs[i] == 2 else []
 			if quads:
 				return self.hand_rankings['Q'] + quads
 			elif trips:
@@ -200,10 +198,10 @@ class Game:
 
 
 	def flush(self,player):
-		if self.flush_possible:
+		if self.flush_suit:
 			if self.flush_count < 5:
-				right = [] if player.right == self.flush_suit else [player.right_val]
-				left = [] if player.right == self.flush_suit else [player.right_val]
+				right = [] if player.right_suit != self.flush_suit else [player.right_val]
+				left = [] if player.left_suit != self.flush_suit else [player.left_val]
 				temp = [i.value for i in self.community_cards if i.suit == self.flush_suit] + left + right
 				if len(temp) >= 5:
 					s_f = self.straight_flush(temp)
@@ -216,8 +214,8 @@ class Game:
 						return self.hand_rankings['F'] + right[0] if right else\
 						self.hand_rankings['F'] + left[0]
 			#FIVE FLUSH
-			right = [] if player.right == self.flush_suit else [player.right_val]
-			left = [] if player.right == self.flush_suit else [player.right_val]
+			right = [] if player.right_suit != self.flush_suit else [player.right_val]
+			left = [] if player.left_suit != self.flush_suit else [player.left_val]
 			temp = [i.value for i in self.community_cards if i.suit == self.flush_suit] + left + right
 			temp.sort(reverse=True)
 			return self.hand_rankings['5F'] + sum(temp[0:5])
@@ -226,9 +224,9 @@ class Game:
 	#just return the hand ranking if valid
 	def straight_flush(self,hand):
 		maxx = False
-		hand.sort(reverse = true)
+		hand.sort(reverse = True)
 		if 14 == hand[0]:
-			cards.append(1)
+			hand.append(1)
 		i = 0
 		while i < len(hand) -5:
 			temp = hand[i:i+5]
@@ -310,8 +308,6 @@ class Game:
 			current += 1 if current+1 < self.num_players else -current
 			count +=1
 
-		for i in self.players:
+		for x,i in enumerate(self.players):
 			i.collect()
-
-if __name__ == '__main__':
-	game = Game()
+			print(f"player {x}'s stack size is: {i.stack}")

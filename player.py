@@ -49,12 +49,8 @@ class Player:
 	def pay_blinds(self,amount,blind_type):
 		if self.stack >= amount:
 			self.wagered += amount
-			#we don't take out of stack yet
-			#self.stack -= amount
 			if blind_type == 'sb':
 				self.is_sb = True
-			#elif blind_type == 'bb':
-				#self.is_bb = True
 			return self.wagered, False
 		else:
 			self.wagered = self.stack 
@@ -71,6 +67,7 @@ class Player:
 			print("Enter a number to raise. If you enter a decimal we will raise that percentage of the pot")
 			print("Unless you have less than a big blind in which case you are all in regardless")
 			print("Raises must be at least a big blind or the ammount of the previous raise")
+
 			action = input("Please make a selection: ")
 			valid, bet,all_in,folded, action_taken = self.parse_action(action, prev_bet, pot_size)
 		self.is_sb = False

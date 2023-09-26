@@ -13,5 +13,5 @@ if __name__ == '__main__':
 
 	game = Game(num_players, big_blind_size, small_blind,starting_stack_size)
 	
-	while True:
-		game.gameloop()
+	#while True:
+		#game.gameloop()
