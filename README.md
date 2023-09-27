@@ -1,6 +1,7 @@
 # poker-game-with-ai:
 ### NOTE: 
-The project is in its early stages and not completed. 
+The project is in its early stages and not yet completed.
+Although the bot portion is not completed if I uploaded the correct files the game itself should be working. Not as clean as I would like it's still not finished and far from perfect/optimized or completley tested but it's probably 95% of the way there. Need to impliment the visuals remove/add some print statments to make everything cleaner and it should be fine. Should have everything cleaned up tomorow and then I begin working on the 'bot' or the poker solver.
 ## SUMMARY:
 Creating a console poker game that you can practice against by playing against a bot
 Not finished yet in preliminary stages. 
