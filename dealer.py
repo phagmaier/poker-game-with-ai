@@ -63,7 +63,8 @@ class Dealer:
 		return self.deck[self.pos]
 
 	def get_value_count(self):
-		return self.value_count
+		return {i:[self.value_count[i]] for i in self.value_count if self.value_count[i] > 0}
+		
 
 	def get_board_pairs(self):
 		return self.board_pairs

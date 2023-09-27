@@ -13,6 +13,8 @@ class Player:
 		self.stack = 100
 		self.wagered = 0
 		self.is_sb = False
+		self.can_win_amount = 1
+		self.original_stack = self.stack
 		self.suit_count = {'S':0,'D':0,"H":0,"C":0}
 
 	def __str__(self):
@@ -49,17 +51,20 @@ class Player:
 	def pay_blinds(self,amount,blind_type):
 		if self.stack >= amount:
 			self.wagered += amount
+			self.can_win_amount = amount
 			if blind_type == 'sb':
 				self.is_sb = True
 			return self.wagered, False
 		else:
 			self.wagered = self.stack 
+			self.can_win_amount = self.stack
 			self.stack = 0
 			return self.wagered, True
 
-	def get_action(self, prev_bet, pot_size):
+	def get_action(self, prev_bet, pot_size,min_bet):
 		valid = False
 		while not valid:
+			"""
 			print("Please select one of the following options (case doesn't matter) \nand then press the Enter key: ")
 			print("Press F to fold")
 			print("Press A or a to go all in")
@@ -67,13 +72,16 @@ class Player:
 			print("Enter a number to raise. If you enter a decimal we will raise that percentage of the pot")
 			print("Unless you have less than a big blind in which case you are all in regardless")
 			print("Raises must be at least a big blind or the ammount of the previous raise")
+			"""
+			print("BETTING STAGE WE ARE JUST CHECKING FOR NOW")
+			action = 'C'
 
-			action = input("Please make a selection: ")
-			valid, bet,all_in,folded, action_taken = self.parse_action(action, prev_bet, pot_size)
+			#action = input("Please make a selection: ")
+			valid, bet,all_in,folded, action_taken = self.parse_action(action, prev_bet, pot_size,min_bet)
 		self.is_sb = False
 		return bet,all_in,folded,action_taken
 
-	def parse_action(self, action,prev_bet,pot_size):
+	def parse_action(self, action,prev_bet,pot_size,minn_bet):
 		if action == 'A' or action == 'a':
 			return self.all_in()
 		elif action == 'c' or action == 'C':
@@ -92,11 +100,12 @@ class Player:
 			except:
 				print("NOT A VALID CHOICE!")
 				return False,None,None,None,None
-			return self._raise(action,prev_bet,pot_size)
+			return self._raise(action,prev_bet,pot_size,minn_bet)
 				
 	def all_in(self):
 		self.wagered = self.stack
 		self.stack = 0
+		self.can_win_amount = self.original_stack
 		return True,self.wagered, True, True, f"All in! for {self.wagered}"
 
 	def call(self, amount):
@@ -104,17 +113,19 @@ class Player:
 		if self.is_sb and not amount:
 			if self.bb < self.stack: 
 				self.wagered = self.bb
-				return True, None, False,True, f"Call {self.wagered}"
+				self.can_win_amount = (self.original_stack + self.wagered) - self.stack
+				return True, self.wagered, False,True, f"Call {self.wagered}"
 			else:
-				self.all_in() 
+				return self.all_in() 
 		if amount >= self.stack:
 			return self.all_in()
 		else:
 			self.wagered = amount
+			self.can_win_amount = (self.original_stack + self.wagered) - self.stack
 			return True,self.wagered, False,True, f"Call {self.wagered}"
 
-	def _raise(self, action,prev_bet,pot_size):
-		min_bet = prev_bet * 2 if prev_bet else self.bb
+	def _raise(self, action,prev_bet,pot_size, minn_bet):
+		min_bet = prev_bet * 2 if prev_bet else minn_bet
 		if action < 1:
 			bet = action * pot_size
 			if pot_size > 0 and bet >= min_bet and bet < self.stack:
@@ -135,4 +146,14 @@ class Player:
 	def collect(self):
 		self.stack -= self.wagered
 		self.wagered = 0
+
+	def reset(self):
+		self.can_win_amount = 0
+		self.original_stack = self.stack
+
+	#adding money on to stack
+	def reload(self):
+		pass
+
+
 
