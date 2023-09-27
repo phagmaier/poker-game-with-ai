@@ -2,7 +2,10 @@ from dealer import Dealer
 from Newcards import Card
 from player import Player
 import copy
-
+'''
+out community cards are a copy of the dealers community cards so when we append them in
+dealer it appens to the game so actually appending it is unnecisary
+'''
 class Game:
 	def __init__(self, num_players=2,bb=1,sb=.5,starting_stack=100):
 		self.num_players = num_players
@@ -34,6 +37,7 @@ class Game:
 		print(f"DEALER BUTTON PLAYER: {self.dealer_button+1}")
 		print()
 
+	#PRINT OUT COMMUNITY CARDS AT EACH STAGE AND SEE WHERE THE ERROR IS TAKING PLACE
 	def gameloop(self):
 		#PREFLOP
 		self.deal_cards()
@@ -59,7 +63,8 @@ class Game:
 			self.payout(self.players[i])
 			return
 		#TURN
-		self.community_cards.append(self.dealer.deal_turn())
+		#self.community_cards.append(self.dealer.deal_turn())
+		self.dealer.deal_turn()
 		print(f"The Turn came: {flop_display}" + str(self.community_cards[-1]))
 		self.street(False)
 		if self.hand_over():
@@ -68,7 +73,8 @@ class Game:
 				i+=1
 			self.payout(self.players[i])
 		#RIVER
-		self.community_cards.append(self.dealer.deal_river())
+		#self.community_cards.append(self.dealer.deal_river())
+		self.dealer.deal_river()
 		print(f"The River came: {flop_display}" + str(self.community_cards[-2]) + " " +\
 		 str(self.community_cards[-1]))
 		self.street(False)
@@ -99,20 +105,15 @@ class Game:
 		for i in self.players:
 			i.reset()
 
-	def payout(self,players,multiple=False):
-		
+	def payout(self,players,multiple=False):	
 		if not multiple:
 			players.stack += self.pot
 			return self.reset()
 		player_bets = [player.can_win_amount for player in self.players]
-		print()
-		print()
-		print("PLAYER BETS")
-		print(player_bets)
-		print() 
 		players_in_hand = sum(self.in_hand)
 		while players_in_hand:
 			if players_in_hand == 1:
+				print("\nONE PLAYER REMAINING\n")
 				for i,_ in players:
 					if self.in_hand[i] == True:
 						self.players[i].stack += self.pot
@@ -128,13 +129,13 @@ class Game:
 				for index,_ in players:
 					if index in indexes:
 						self.players[index].stack += winnings
-					#elif self.in_hand[index]:
-						#self.players[index].stack -= min_bet
+						self.players[index].stack -= min_bet
 					player_bets[index] -= min_bet
 					self.in_hand[index] = False if player_bets[index] == 0 else True
 			
 			players_in_hand = sum(self.in_hand)
 			if players_in_hand == 0:
+				print("\nNO PLAYERS RAMINING\n")
 				return self.reset()
 
 
@@ -160,8 +161,8 @@ class Game:
 				return pairs, "QUADS"
 			if pairs > self.hand_rankings['FH']:
 				return pairs, "FULL HOUSE"
-		if flush:
-			return flush
+		if flush:	
+			return flush, "FLUSH"
 		straight = self._straight(player)
 		if straight:
 			return straight, "STRAIGHT"
@@ -243,13 +244,13 @@ class Game:
 					s_f = self.straight_flush(temp)
 					if s_f:
 						return self.hand_rankings['SF'] + s_f
-					if right and left:
-						return self.hand_rankings['F'] + right[0] if right[0] > left[0] else\
-						self.hand_rankings['F'] + left[0]
+					#if len(right) and len(left):
+						#return self.hand_rankings['F'] + right[0] if right[0] > left[0] else\
+						#self.hand_rankings['F'] + left[0]
 					else:
 						return self.hand_rankings['F'] + right[0] if right else\
 						self.hand_rankings['F'] + left[0]
-			if flush_count == 5:
+			if self.flush_count == 5:
 				#FIVE FLUSH
 				right = [] if player.right_suit != self.flush_suit else [player.right_val]
 				left = [] if player.left_suit != self.flush_suit else [player.left_val]

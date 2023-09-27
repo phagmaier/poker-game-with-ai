@@ -58,6 +58,7 @@ class Dealer:
 		new = self.deck[self.pos]
 		self.flush_count[new.suit] += 1
 		self.value_count[new.value] += 1
+		self.community.append(new)
 		if self.value_count[new.value] > 1:
 				self.board_pairs[new.value] = self.value_count[new.value]
 		return self.deck[self.pos]
@@ -74,15 +75,4 @@ class Dealer:
 			if self.flush_count[i] >=3:
 				return i, self.flush_count[i]
 		return None, None
-
-	
-
-
-
-
-		
-
-
-
-
 
