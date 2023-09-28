@@ -49,9 +49,9 @@ class Player:
 
 	#like 99% sure you don't need is_bb so commenting it out
 	def pay_blinds(self,amount,blind_type):
-		if self.stack >= amount:
+		if self.stack > amount:
 			self.wagered += amount
-			self.can_win_amount = amount
+			#self.can_win_amount = amount
 			if blind_type == 'sb':
 				self.is_sb = True
 			return self.wagered, False
@@ -73,10 +73,10 @@ class Player:
 			print("Unless you have less than a big blind in which case you are all in regardless")
 			print("Raises must be at least a big blind or the ammount of the previous raise")
 			"""
-			print("BETTING STAGE WE ARE JUST CHECKING FOR NOW")
-			action = 'C'
+			#print("BETTING STAGE WE ARE JUST CHECKING FOR NOW")
+			#action = 'C'
 
-			#action = input("Please make a selection: ")
+			action = input("Please make a selection: ")
 			valid, bet,all_in,folded, action_taken = self.parse_action(action, prev_bet, pot_size,min_bet)
 		self.is_sb = False
 		return bet,all_in,folded,action_taken
@@ -104,7 +104,7 @@ class Player:
 				
 	def all_in(self):
 		self.wagered = self.stack
-		self.stack = 0
+		#self.stack = 0
 		self.can_win_amount = self.original_stack
 		return True,self.wagered, True, True, f"All in! for {self.wagered}"
 

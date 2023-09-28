@@ -7,7 +7,7 @@ YOU HAVE more than in community cards and you have a duplicate
 '''
 
 if __name__ == '__main__':
-	random.seed(4)
+	random.seed(13)
 	#num_players = int(input("How many players: "))
 	#big_blind_size = float(input("Big blind size: "))
 	#small_blind = .5 * big_blind_size
@@ -26,52 +26,52 @@ if __name__ == '__main__':
 		print(f"player 2 card 1: {game.players[1].card1}  card 2: {game.players[1].card2} ")
 		print(f"player 3 card 1: {game.players[2].card1}  card 2: {game.players[2].card2} ")
 		break
-	#PREFLOP
+	
+
 	'''
-	print()
-	print("PREFLOP")
-	print()
+	#PREFLOP
 	game.deal_cards()
-	game.street(True)
-	#FLOP
-	print()
-	print("FLOP")
-	print()
-	game.community_cards = game.dealer.deal_flop()
-	game.street(False)
-	#TURN
-	print()
-	print("TURN")
-	print()
-	game.dealer.deal_turn()
-	game.street(False)
-	print()
-	print("RIVER")
-	print()
-	game.dealer.deal_river()
-	game.street(False)
-	game.flush_suit, game.flush_count = game.dealer.get_poss_flush()
-	hand_strengths = game.get_hand_strengths()
-	print()
-	print('community cards')
-	for i in game.community_cards:
-		print(i)
-	print()
-	print("players hands:")
-	for i,player in enumerate(game.players):
-		print(f"PLAYER {i}s cards: {player.card1}  {player.card2}")
-
-	print()
-	print('HAND STRENGTHS')
-	print()
-	for i in hand_strengths:
-		print(i)
-
-	game.payout(hand_strengths,True)
-
+	print(game.pot)
 	for i in game.players:
 		print(i.stack)
-		
+	game.street(True)
+	game.collect_stack()
+	for i in game.players:
+		print(i.stack)
+	print(game.pot)
+	
+	game.community_cards = game.dealer.deal_flop()
+	game.street(False)
+	game.collect_stack()
+	for i in game.players:
+		print(i.stack)
+	game.dealer.deal_turn()
+	game.street(False)
+	game.collect_stack()
+	for i in game.players:
+		print(i.stack)
+	game.dealer.deal_river()
+	game.street(False)
+	game.collect_stack()
+	for i in game.players:
+		print(i.stack)
+	game.flush_suit, game.flush_count = game.dealer.get_poss_flush()
+	hand_strengths = game.get_hand_strengths()
+	print('blind positions')
+	print(game.bb_pos)
+	print(game.sb_pos)
+	print()
+	#EVERYTHING ABOVE HERE IS WORKING GREAT
+
+	#print("\nNOW WE ARE CHECKING THE CAN WIN AMMOUNTS\n")
+	#for i in game.players:
+		#print(i.can_win_amount)
+
+	print(hand_strengths)
+	game.payout(hand_strengths,True)
 	'''
 
-#[13, 5, 6, 6, 14]
+
+
+
+

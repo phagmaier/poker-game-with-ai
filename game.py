@@ -15,7 +15,6 @@ class Game:
 		self.dealer = Dealer(num_players)
 		self.community_cards = []
 		self.pot = 0
-		self.player_bets = [0 for i in range(num_players)]
 		self.bb = bb
 		self.sb = sb
 		#NEW FOR ADDING BLINDS FOR PAYOUTS
@@ -27,22 +26,28 @@ class Game:
 		self.straights = self.create_straights()
 		self.flush_count = 0
 		self.flush_suit = None
+		self.player_bets = [0 for _ in range(num_players)]
+		self.street_bets = [0 for _ in range(num_players)]
 		#from strongest to weakest 5F = Five flush cause largest card may be on the board
 		self.hand_rankings = {'SF':900,'Q':800,'FH':700,'F':600, '5F':500 ,'S':400,'T':300,
 		'TP':200,'P':100,'H':0}
+		'''
 		print()
 		print(f"BIG BLIND IS PLAYER: {self.bb_pos+1}")
 		print(f"SMALL BLIND PLAYER: {self.sb_pos+1}")
 		print(f"UNDER THE GUN PLAYER: {self.utg+1}")
 		print(f"DEALER BUTTON PLAYER: {self.dealer_button+1}")
 		print()
+		'''
 
 	#PRINT OUT COMMUNITY CARDS AT EACH STAGE AND SEE WHERE THE ERROR IS TAKING PLACE
 	def gameloop(self):
 		#PREFLOP
 		self.deal_cards()
 		#preflop action
+		print("PREFLOP ACTION")
 		self.street(True)
+		self.collect_stack()
 		if self.hand_over():
 			i = 0
 			while not self.in_hand[i]:
@@ -56,6 +61,7 @@ class Game:
 			flop_display += str(i) + " "
 		print(f"The Flop came: {flop_display}")
 		self.street(False)
+		self.collect_stack()
 		if self.hand_over():
 			i = 0
 			while not self.in_hand[i]:
@@ -67,6 +73,7 @@ class Game:
 		self.dealer.deal_turn()
 		print(f"The Turn came: {flop_display}" + str(self.community_cards[-1]))
 		self.street(False)
+		self.collect_stack()
 		if self.hand_over():
 			i = 0
 			while not self.in_hand[i]:
@@ -78,6 +85,7 @@ class Game:
 		print(f"The River came: {flop_display}" + str(self.community_cards[-2]) + " " +\
 		 str(self.community_cards[-1]))
 		self.street(False)
+		self.collect_stack()
 		if self.hand_over():
 			i = 0
 			while not self.in_hand[i]:
@@ -87,23 +95,21 @@ class Game:
 			self.flush_suit, self.flush_count = self.dealer.get_poss_flush()
 			hand_strengths = self.get_hand_strengths()
 			self.payout(hand_strengths,True)
-	'''
-	ask players if they want to reload and if players who busted want to rejoin
-	if a player busts and doesn't rejoin make sure to change self.numplayers 
-	Basically kick out broke players if they don't rejoin ask them 
-	also if player adds have to find way to account for that don't care for now
-	'''
+	
 	def reset(self):
+		for i,player in enumerate(self.players):
+			print(f"AT THE END OF THE HAND PLAYER {i}s stack is: {player.stack}")
+		print()
+		print()
 		self.community_cards = []
 		self.pot = 0
-		self.player_bets = []
 		self.in_hand = [True for _ in range(self.num_players)]
 		self.all_in = [False for _ in range(self.num_players)]
-		self.player_bets = [0 for _ in range(self.num_players)]
 		self.dealer.reset()
 		self.change_blinds()
-		for i in self.players:
-			i.reset()
+		for i,player in enumerate(self.players):
+			player.reset()
+			print(f"AT THE END END END OF THE HAND PLAYER {i}s stack is: {player.stack}")
 
 	def payout(self,players,multiple=False):	
 		if not multiple:
@@ -135,7 +141,7 @@ class Game:
 			
 			players_in_hand = sum(self.in_hand)
 			if players_in_hand == 0:
-				print("\nNO PLAYERS RAMINING\n")
+				#print("\nNO PLAYERS RAMINING\n")
 				return self.reset()
 
 
@@ -309,21 +315,25 @@ class Game:
 			self.utg = self.sb_pos
 			self.dealer_button = self.bb_pos
 
-
+	#technically the amount they anyone can win is the amount the bb 
 	def deal_cards(self):
 		hands = self.dealer.deal_preflop()
 		for player,hand in zip(self.players,hands):
 			player.get_hand(hand)
 		#PAY THE BLINDS
-		bb_temp,self.all_in[self.bb_pos] = self.players[self.bb_pos].pay_blinds(self.bb, 'bb`')
+		self.player_bets[self.bb_pos],self.all_in[self.bb_pos] = self.players[self.bb_pos].pay_blinds(self.bb, 'bb`')
 		sb_temp,self.all_in[self.sb_pos] = self.players[self.sb_pos].pay_blinds(self.sb, 'sb')
-		self.player_bets[self.bb_pos] = bb_temp
-		self.player_bets[self.sb_pos] = sb_temp
-		self.pot += bb_temp + sb_temp #doing it this way cause theoretically player could be all in
-	
+		self.pot += self.player_bets[self.bb_pos] + sb_temp #doing it this way cause theoretically player could be all in
+		for i,player in enumerate(self.players):
+			if i != self.sb_pos:
+				player.can_win_amount = self.player_bets[self.bb_pos]
+			else:
+				player.can_win_amount = sb_temp
 	def street(self,preflop):
 		count = 0
 		prev_bet = 0
+		self.street_bets = [0 for _ in range(self.num_players)]
+		current_pot = 0
 
 		if preflop:
 			current = self.utg
@@ -342,22 +352,26 @@ class Game:
 				print(f"Player {current+1}: {action_taken}")
 				print()
 				if bet:
-					self.player_bets[current] = bet
-					self.pot = sum(self.player_bets)
-					if bet > prev_bet and bet > min_bet:
+					self.street_bets[current] = bet
+					self.pot = sum(self.street_bets) + sum(self.player_bets)
+					if bet > prev_bet and bet >= min_bet:
 						prev_bet,count = bet,0
 					else:
 						if self.sb_check:
 							self.sb_check = False
 						else:
-							prev_bet,count = min_bet,0
+							prev_bet,count = min_bet,count
 
 					
 			current += 1 if current+1 < self.num_players else -current
 			count +=1
 
-		for x,i in enumerate(self.players):
-			i.collect()
-			print(f"player {x}'s stack size is: {i.stack}")
+	def collect_stack(self):
+		print(f"The pot size is {self.pot}")
+		for i,player in enumerate(self.players):
+			player.collect()
+			self.player_bets[i] += self.street_bets[i]
+
+		
 
 
