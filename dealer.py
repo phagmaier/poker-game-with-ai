@@ -1,4 +1,4 @@
-from Newcards import Card
+from cards import Card
 import random
 
 class Dealer:

@@ -1,77 +1,69 @@
-from game import Game
 import random
-
-'''
-SOMEHOW MY COMMUNITY CARDS ARE GETTING FUCKED UP (BEFORE CHECKING FOR HAND TYPES)
-YOU HAVE more than in community cards and you have a duplicate
-'''
-
+from player import Player
+from game import Game
+from dealer import Dealer
 if __name__ == '__main__':
-	random.seed(13)
-	#num_players = int(input("How many players: "))
-	#big_blind_size = float(input("Big blind size: "))
-	#small_blind = .5 * big_blind_size
-	#starting_stack_size = int(input("Enter all players starting stack size: "))
-	num_players = 3
-	big_blind_size = 1
-	small_blind = .5 * big_blind_size
-	num_players = 3
-	starting_stack_size = 100
 
-	game = Game(num_players, big_blind_size, small_blind,starting_stack_size)
-	
-	while True:
-		game.gameloop()
-		print(f"player 1 card 1: {game.players[0].card1}  card 2: {game.players[0].card2} ")
-		print(f"player 2 card 1: {game.players[1].card1}  card 2: {game.players[1].card2} ")
-		print(f"player 3 card 1: {game.players[2].card1}  card 2: {game.players[2].card2} ")
-		break
-	
 
-	'''
+	random.seed(42)
+	game = Game(3,100,1,.5)
+
+	print(f"big blind position{game.bb_pos}")
+	print(f"small blind position{game.sb_pos}")
+
 	#PREFLOP
-	game.deal_cards()
-	print(game.pot)
-	for i in game.players:
-		print(i.stack)
-	game.street(True)
-	game.collect_stack()
-	for i in game.players:
-		print(i.stack)
-	print(game.pot)
-	
-	game.community_cards = game.dealer.deal_flop()
-	game.street(False)
-	game.collect_stack()
-	for i in game.players:
-		print(i.stack)
-	game.dealer.deal_turn()
-	game.street(False)
-	game.collect_stack()
-	for i in game.players:
-		print(i.stack)
-	game.dealer.deal_river()
-	game.street(False)
-	game.collect_stack()
-	for i in game.players:
-		print(i.stack)
-	game.flush_suit, game.flush_count = game.dealer.get_poss_flush()
-	hand_strengths = game.get_hand_strengths()
-	print('blind positions')
-	print(game.bb_pos)
-	print(game.sb_pos)
+	print("PREFLOP")
+	game.preflop()
+	print("PLAYER HANDS:")
+	for player in game.players:
+		print(player)
 	print()
-	#EVERYTHING ABOVE HERE IS WORKING GREAT
+	print(f"THE POT BEFORE PRFLOP ACTION IS: {game.pot}")
+	game.street_preflop()
+	game.street_reset()
+	if game.hand_over():
+		game.payout(game.get_player())
+		game.reset()
+	
+	#FLOP
+	print("FLOP")
+	game.community_cards = game.dealer.deal_flop() #Should probably just make a flop function
+	game.street()
+	game.street_reset()
+	if game.hand_over():
+		game.payout(game.get_player())
+		game.reset()
 
-	#print("\nNOW WE ARE CHECKING THE CAN WIN AMMOUNTS\n")
-	#for i in game.players:
-		#print(i.can_win_amount)
+	print("TURN")
+	#TURN
+	game.dealer.deal_turn()
+	game.street()
+	game.street_reset()
+	if game.hand_over():
+		game.payout(game.get_player())
+		game.reset()
 
-	print(hand_strengths)
-	game.payout(hand_strengths,True)
-	'''
+	print("RIVER")
+	#RIVER
+	game.dealer.deal_river()
+	game.street()
+	game.street_reset()
+	print("AMOUNT EACH PLAYER CAN WIN")
+	for i in game.players:
+		print(i.amount_to_win)
+	if game.hand_over():
+		game.payout(game.get_player())
+		game.reset()
+	else:
+		game.flush_suit, game.flush_count = game.dealer.get_poss_flush()
+		hand_strengths = game.get_hand_strengths()
+		game.payout(hand_strengths, True)
+		game.reset()
 
 
 
 
 
+
+	
+	
