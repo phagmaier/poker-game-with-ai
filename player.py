@@ -52,8 +52,8 @@ class Player:
 			print("Raises must be at least a big blind or the ammount of the previous raise")
 			"""
 			#print("BETTING STAGE WE ARE JUST CHECKING FOR NOW")
-			action = 'C'
-			#action = input("Please make a selection: ")
+			#action = 'C'
+			action = input("Please make a selection: ")
 			valid,bet,all_in,in_hand,total,action_taken = self.parse_action(action, prev_bet, pot_size,min_bet)
 			if not valid:
 				print("NOT A VALID SELECTION PLEASE TRY AGAIN")
@@ -70,9 +70,12 @@ class Player:
 					return self.all_in()
 		elif action == 'f' or action == 'F':
 			return self.fold()
+
+		if action == 'a' or action == 'A':
+			return self.all_in()
 		else:
 			if not prev_bet:
-				return self.bet()
+				return self.bet(action,pot_size,min_bet)
 			else:
 				return self._raise(action,prev_bet,pot_size,min_bet)
 
@@ -96,8 +99,8 @@ class Player:
 
 	def all_in(self):
 		self.amount_to_win += self.stack - self.wagered
-		self.wagered = self.stack
 		temp = self.stack - self.wagered
+		self.wagered = self.stack
 		return True, temp, True,True, self.wagered, f"ALL IN FOR: {self.wagered}"
 
 	def _raise(self,action,prev_bet,pot_size,min_bet):
