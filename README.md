@@ -1,7 +1,6 @@
 # poker-game-with-ai:
 ### NOTE: 
-The project is in its early stages and not yet completed.
-Although the bot portion is not completed if I uploaded the correct files the game itself should be working. Not as clean as I would like it's still not finished and far from perfect/optimized or completley tested but it's probably 95% of the way there. Need to impliment the visuals remove/add some print statments to make everything cleaner and it should be fine. Should have everything cleaned up tomorow and then I begin working on the 'bot' or the poker solver.
+The project is in its early stages and not yet completed. The game has quite a few bugs still mostly in regards to pot distribution. Because we allow players to continue even if they can't post a full BB or SB the payouts are not yet fully functional although determing the winner and the strength of a players hand is currently  working. Visuals are not yet implimented. Should be able to go through each street of action (preflop, flop, turn,river, payout) but the actual payouts are not guranteed to be accurate. Have gotten busy but this should all be fixed by the end of the weekend. The bot is only working in the preflop and flop stages and will post files when done 
 ## SUMMARY:
 Creating a console poker game that you can practice against by playing against a bot
 Not finished yet in preliminary stages. 

@@ -165,6 +165,7 @@ class Game:
 		self.payouts_blinds(players) #I'm HERE
 		
 		while players_in_hand:
+			#print([player_bets[i] for i,_ in players if self.in_hand[i]])
 			if players_in_hand == 1:
 				for i,_ in players:
 					if self.in_hand[i] == True:
