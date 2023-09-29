@@ -79,7 +79,7 @@ class Player:
 			else:
 				return self._raise(action,prev_bet,pot_size,min_bet)
 
-	#Valid, bet, all_in, in_hand,total,action			
+	#valid,bet,all_in,in_hand,total,action_taken			
 	def call(self,prev_bet):
 		temp = prev_bet - self.wagered
 		if temp == 0:
@@ -114,7 +114,7 @@ class Player:
 					self.amount_to_win += temp
 					return True,temp,False,True,self.wagered,f"Raise to {self.wagered}"
 				else:
-					return False,0,None,None,NoneNone
+					return False,0,None,None,None,None
 			else:
 				if action > min_bet:
 					temp = action - self.wagered
@@ -123,7 +123,7 @@ class Player:
 					return True,temp,False,True,self.wagered,f"Raise to {self.wagered}"
 		except:
 			return False,0,None,None,None,None
-
+	#valid,bet,all_in,in_hand,total,action_taken
 	def bet(self,action,pot_size,min_bet):
 		try:
 			action = float(action)
@@ -133,7 +133,8 @@ class Player:
 				temp = action - self.wagered
 				self.wagered += temp
 				self.amount_to_win += temp
-				return True, temp, True, f"BET {self.wagered}"
+
+				return True, temp,False,True,self.wagered, f"BET {self.wagered}"
 			else:
 				return False,0,None,None,None,None
 		except:
