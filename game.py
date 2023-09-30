@@ -52,10 +52,10 @@ class Game:
 		self.sb_paid,self.all_in[self.sb_pos] = self.players[self.sb_pos].pay_sb()
 		self.blinds = self.bb_paid + self.sb_paid
 		self.pot = self.blinds
-		if self.bb_paid < self.bb:
-			self.players[bb_pos].amount_to_win = self.bb_paid
-		if self.sb_paid < self.sb:
-			self.players[bb_pos].amount_to_win = self.sb_paid
+		#if self.bb_paid < self.bb:
+			#self.players[bb_pos].amount_to_win = self.bb_paid
+		#if self.sb_paid < self.sb:
+			#self.players[bb_pos].amount_to_win = self.sb_paid
 
 	def street_preflop(self):
 		total = 0

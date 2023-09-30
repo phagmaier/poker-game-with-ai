@@ -12,7 +12,7 @@ class Player:
 		self.suit_count = {'S':0,'D':0,"H":0,"C":0}
 		self.wagered = 0
 		self.amount_to_win = 0
-		self.blind_paid = False
+		self.blind_adjustment = 0
 
 	def get_cards(self,hand):
 		self.card1,self.card2 = hand
@@ -24,6 +24,7 @@ class Player:
 	def pay_bb(self):
 		if self.stack > self.bb:
 			self.wagered = self.bb
+			self.blind_adjustment = self.bb
 			return self.bb,False
 		else:
 			self.wagered = self.stack
@@ -33,6 +34,7 @@ class Player:
 	def pay_sb(self):
 		if self.stack > self.sb:
 			self.wagered = self.sb
+			self.blind_adjustment = self.sb
 			return self.sb,False
 		else:
 			self.wagered = self.stacks
@@ -57,6 +59,7 @@ class Player:
 			valid,bet,all_in,in_hand,total,action_taken = self.parse_action(action, prev_bet, pot_size,min_bet)
 			if not valid:
 				print("NOT A VALID SELECTION PLEASE TRY AGAIN")
+		self.blind_adjustment = 0
 		return bet,all_in,in_hand,total,action_taken
 
 	def parse_action(self,action,prev_bet,pot_size,min_bet):
@@ -94,11 +97,14 @@ class Player:
 				else:
 					return self.all_in()
 		self.wagered += temp
-		self.amount_to_win += temp
+		self.amount_to_win += temp + self.blind_adjustment
 		return True,temp,False,True, self.wagered, f"CALL {self.wagered}"
 
 	def all_in(self):
-		self.amount_to_win += self.stack - self.wagered
+		if self.blind_adjustment and self.stack > self.bb:
+			self.amount_to_win += self.stack - (self.wagered + self.blind_adjustment)
+		else:
+			self.stack - self.wagered
 		temp = self.stack - self.wagered
 		self.wagered = self.stack
 		return True, temp, True,True, self.wagered, f"ALL IN FOR: {self.wagered}"
@@ -111,7 +117,8 @@ class Player:
 				if bet > 2 * prev_bet:
 					temp = bet - self.wagered
 					self.wagered += temp
-					self.amount_to_win += temp
+
+					self.amount_to_win += temp + self.blind_adjustment
 					return True,temp,False,True,self.wagered,f"Raise to {self.wagered}"
 				else:
 					return False,0,None,None,None,None
@@ -132,7 +139,7 @@ class Player:
 					return self.all_in()
 				temp = action - self.wagered
 				self.wagered += temp
-				self.amount_to_win += temp
+				self.amount_to_win += (temp + self.blind_adjustment)
 
 				return True, temp,False,True,self.wagered, f"BET {self.wagered}"
 			else:
