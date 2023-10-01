@@ -1,5 +1,5 @@
 # poker-game-with-ai:
-### NOTEs/UPDATED: 
+### NOTES/UPDATED: 
 The project is in its early stages and not yet complete. The game is now (hopefuly) bug free or at least all obvious bugs 
 in the game logic have been removed and users came now play every street without worry of a crash or incorrect payouts. 
 Currrently there is no way in game for players to "add on" chips, drop out of the game,
@@ -24,3 +24,5 @@ The end goal is to have this as a website.
 2. Create solver. 
 3. Create bot that uses the solver in order to play against human player
 4. rewrite in c++
+
+
