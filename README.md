@@ -1,5 +1,5 @@
 # poker-game-with-ai:
-### NOTES/UPDATED: 
+### NOTES/UPDATES: 
 The project is in its early stages and not yet complete. The game is now (hopefuly) bug free or at least all obvious bugs 
 in the game logic have been removed and users came now play every street without worry of a crash or incorrect payouts. 
 Currrently there is no way in game for players to "add on" chips, drop out of the game,
