@@ -1,11 +1,23 @@
 # poker-game-with-ai:
 ### NOTEs/UPDATED: 
-The project is in its early stages and not yet complete. The game is now relativley bug free or at least all obvious bugs in the game logic have been removed and users came now play every street without worry of a crash or incorrect payouts. Still need to add the gameloop to the game class, add a way for players to "add on" chips, drop out of the game, add a player without money out of the game. More testing should also be done to ensure everything is working properly especially edge cases which i tried to accomidate for like ablind not being able to post in full. Some cash games don't allow this but I decided to allow for it. Feel free to report bugs or inform me. Much of the game can probably be cleaned up and made more efficient not to mention the game logic particularly the payments could be done better. I will also impliment pure solver functionality that I hope will not be too terrible. I am also attempting to build the final version as a website so if you are interested in this or interested in this project or would like to help please contact me at: parkerhagmaier@gmail.com
+The project is in its early stages and not yet complete. The game is now (hopefuly) bug free or at least all obvious bugs 
+in the game logic have been removed and users came now play every street without worry of a crash or incorrect payouts. 
+Currrently there is no way in game for players to "add on" chips, drop out of the game,
+add players, or automatically kick out players with no chips. 
+More testing should also be done to ensure everything is working properly in edge cases which i tried to accomidate for 
+especually cases where a player in one of the blinds blind cannot post the amount needed to be paid in full. 
+Please report any bugs found. Much of the game can probably be cleaned up and made more efficient and hopefuly this will 
+continue to improve as the project grows. Currently working on the implimentation of the actual poker solver/bot. 
+I am also attempting to build the final version as a website so if you are interested in this or interested in contributing 
+to the project or would like to help please contact me at: parkerhagmaier@gmail.com.
+The c++ version of the actual poker game will be posted shortly.
 
 ## SUMMARY:
-Creating a console poker game that you can practice against by playing against a bot
-Not finished yet in preliminary stages. 
-The goal is to create a poker game you can play in terminal and then essentially create a fairly decent poker solver that a player can chose to play against as an adversary to practice against. Another goal is just to have the solver as a seperate thing all together so you can run poker sims and see the optimal course of action to take. If all that goes well I may try to make it a website depending on how well this goes.
+Creating a console poker game that allows user to practice/ practice against a bot and or other human players.
+Currently only the basic game is functional and the 'bot' implimentation is not yet finished.
+Hopefuly pure solver functionality will also be added so users can just see what the bot thinks is the optimal strategy 
+in each particular situation. 
+The end goal is to have this as a website.
 
 ## TO-DO:
 1. More testing
