@@ -88,8 +88,8 @@ class Game:
 						else:
 							prev_bet = min_bet if total < min_bet else total
 				self.pot += bet
-				
-			print(f"The pot is: {self.pot}")
+				print(f"The pot is: {self.pot}")
+
 			current += 1 if current+1 < self.num_players else -current
 			count +=1
 	
@@ -119,8 +119,8 @@ class Game:
 						else:
 							prev_bet = min_bet if total < min_bet else total
 				self.pot += bet
+				print(f"The pot is: {self.pot}")
 
-			print(f"The pot is: {self.pot}")
 			current += 1 if current+1 < self.num_players else -current
 			count +=1
 			

@@ -2,9 +2,6 @@ import random
 from player import Player
 from game import Game
 from dealer import Dealer
-from cards import Card
-from visuals import Viz_Cards
-
 
 def game_loop(game):
 
@@ -31,17 +28,14 @@ def game_loop(game):
 		print("PREFLOP")
 		game.preflop()
 		print("PLAYER HANDS:")
-		for i,player in enumerate(game.players):
-			print(f"PLAYER {i}S HAND IS: ")
-			flop_viz = Viz_Cards(player.card1,player.card2)
-			print(flop_viz())
-			#print(player)
+		for player in game.players:
+			print(player)
 		print()
 		print(f"THE POT BEFORE PRFLOP ACTION IS: {game.pot}")
 		print("\nCHECK ME\n")
 		game.street_preflop()
 		game.street_reset()
-		#print([i.amount_to_win for i in game.players])
+		print([i.amount_to_win for i in game.players])
 		if game.hand_over():
 			game.payout(game.get_player())
 			game.reset()
@@ -50,9 +44,6 @@ def game_loop(game):
 		#FLOP
 		print("FLOP")
 		game.community_cards = game.dealer.deal_flop() #Should probably just make a flop function
-		print("THE FLOP IS:")
-		flop_viz = Viz_Cards(*game.community_cards)
-		print(flop_viz())
 		game.street()
 		game.street_reset()
 		if game.hand_over():
@@ -64,9 +55,6 @@ def game_loop(game):
 		print("TURN")
 		#TURN
 		game.dealer.deal_turn()
-		print("THE TURN IS:")
-		turn_viz = Viz_Cards(*game.community_cards)
-		print(turn_viz())
 		game.street()
 		game.street_reset()
 		if game.hand_over():
@@ -78,9 +66,6 @@ def game_loop(game):
 		print("RIVER")
 		#RIVER
 		game.dealer.deal_river()
-		print("THE RIVER IS:")
-		river_viz = Viz_Cards(*game.community_cards)
-		print(river_viz())
 		game.street()
 		game.street_reset()
 		print("AMOUNT EACH PLAYER CAN WIN")

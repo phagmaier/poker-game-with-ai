@@ -1,4 +1,4 @@
-from cards import Card
+from Newcards import Card
 '''
 THIS CLASS CREATES A MORE INTERESTING VISUALS FOR THINGS LIKE FLOP RIVER ETC...
 '''
@@ -58,9 +58,5 @@ card3 = Card('H', 12)
 
 viz = Viz_Cards(card1, card2, card3)
 print(viz())
-
-rrr = [card1,card2,card3]
-
-viz = Viz_Cards(*rrr)
-print(viz())
 '''
+
