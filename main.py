@@ -38,7 +38,6 @@ def game_loop(game):
 			#print(player)
 		print()
 		print(f"THE POT BEFORE PRFLOP ACTION IS: {game.pot}")
-		print("\nCHECK ME\n")
 		game.street_preflop()
 		game.street_reset()
 		#print([i.amount_to_win for i in game.players])
@@ -92,7 +91,6 @@ def game_loop(game):
 			return
 			
 		else:
-			print("RUNNING THIS")
 			game.flush_suit, game.flush_count = game.dealer.get_poss_flush()
 			hand_strengths = game.get_hand_strengths()
 			game.payout(hand_strengths, True)

@@ -57,6 +57,7 @@ class Game:
 		#if self.sb_paid < self.sb:
 			#self.players[bb_pos].amount_to_win = self.sb_paid
 
+	#WILL HAVE TO REWORK THIS BECAUSE I DON'T THINK IT'S ADJUSTING BY THE POT 
 	def street_preflop(self):
 		total = 0
 		count = 0
