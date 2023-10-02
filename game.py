@@ -29,6 +29,7 @@ class Game:
 		self.flush_suit = None
 		self.sb_paid = 0
 		self.bb_paid = 0
+		self.blind_payouts = True
 		self.hand_rankings = {'SF':900,'Q':800,'FH':700,'F':600, '5F':500 ,'S':400,'T':300,
 		'TP':200,'P':100,'H':0}
 
@@ -70,6 +71,8 @@ class Game:
 				bet,self.all_in[current],self.in_hand[current],total,action_taken = \
 				self.players[current].get_action(prev_bet,self.pot,min_bet)
 				print(f"player {count}: {action_taken}")
+				if bet >= min_bet:
+					self.blind_payouts = False
 				if collect_sb and current == self.sb_pos:
 					self.collect_sb = False
 					if bet:
@@ -162,12 +165,13 @@ class Game:
 			#return self.reset()
 		player_bets = [player.amount_to_win for player in self.players]
 		players_in_hand = sum(self.in_hand)
-		
-		self.payouts_blinds(players) #I'm HERE
+		if self.blind_payouts:
+			self.payouts_blinds(players) #I'm HERE
 		
 		while players_in_hand:
 			#print([player_bets[i] for i,_ in players if self.in_hand[i]])
 			if players_in_hand == 1:
+				print("THIS DOESN'T RUN DOES IT")
 				for i,_ in players:
 					if self.in_hand[i] == True:
 						self.players[i].stack += self.pot
@@ -183,14 +187,13 @@ class Game:
 				for index,_ in players:
 					if index in indexes:
 						self.players[index].stack += winnings
-						self.players[index].stack -= min_bet
+						#self.players[index].stack -= min_bet
 					player_bets[index] -= min_bet
 					self.in_hand[index] = False if player_bets[index] == 0 else True
 			
 			players_in_hand = sum(self.in_hand)
 			if players_in_hand == 0:
 				return
-				#return self.reset()
 	
 	def payouts_blinds(self,players):
 		sorted_players = sorted(players, key= lambda x: x[1][0], reverse=True)
@@ -198,12 +201,12 @@ class Game:
 		for i,_ in sorted_players:
 			if i == self.bb_pos and self.bb_paid < self.bb or i == self.sb_pos and self.sb_paid < self.sb:
 				if i == self.bb_pos:
-					self.in_hand[i] = false
+					self.in_hand[i] = False
 					self.players[i].stack += self.bb_paid
 					self.blinds -= self.bb_paid
 					self.pot -= self.bb_paid
 				else:
-					#self.in_hand[i] = false
+					self.in_hand[i] = False
 					self.players[i].stack += self.sb_paid
 					self.blinds -= self.sb_paid
 					self.pot -= self.sb_paid
