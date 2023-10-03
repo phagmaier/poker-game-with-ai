@@ -112,7 +112,7 @@ class Player:
 	def _raise(self,action,prev_bet,pot_size,min_bet):
 		try:
 			action = float(action)
-			if action < 1:
+			if action < 1 and action > 0:
 				bet = action * pot_size
 				if bet > 2 * prev_bet:
 					temp = bet - self.wagered
@@ -128,6 +128,8 @@ class Player:
 					self.wagered += temp
 					self.amount_to_win += temp
 					return True,temp,False,True,self.wagered,f"Raise to {self.wagered}"
+				else:
+					return False,None,None,None,None,None
 		except:
 			return False,0,None,None,None,None
 	#valid,bet,all_in,in_hand,total,action_taken
