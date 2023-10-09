@@ -1,6 +1,6 @@
 # poker-game-with-ai:
 ### NOTES/UPDATES: 
-Currently the Python version still has a few samll bugs and a couple tweaks need to be made in
+Currently the Python version still has a few small bugs and a couple tweaks need to be made in
 order to assure that it works as expected. This should be fixed tomorow. 
 The c++ version is mostly finished but most likley buggy and has problems since it has not 
 been tested at all. Since it is basically a quick copy of the python code the logic should
