@@ -98,9 +98,6 @@ class Game:
                 bet,self.all_in[current],self.in_hand[current],total,action_taken = \
                 self.players[current].get_action(prev_bet,self.pot,min_bet)
                 print(f"player {current}: {action_taken}")
-
-
-            #raise
                 if total > min_bet and total >= 2 * prev_bet:
                     prev_bet = total
                     left_to_act = [not self.all_in[i] and self.in_hand[i] for i in range(self.num_players)]
@@ -153,7 +150,7 @@ class Game:
             #print([player_bets[i] for i,_ in players if self.in_hand[i]])
             if players_in_hand == 1:
                 for i,_ in players:
-                    if self.in_hand[i] == True:
+                    if self.in_hand[i]:
                         self.players[i].stack += self.pot
                         return
                         #return self.reset()
@@ -292,22 +289,18 @@ class Game:
             if self.flush_count < 5:
                 right = [] if player.right_suit != self.flush_suit else [player.right_val]
                 left = [] if player.left_suit != self.flush_suit else [player.left_val]
-                temp = [i.value for i in self.community_cards if i.suit == self.flush_suit] + left + right
+                temp = list(set([i.value for i in self.community_cards if i.suit == self.flush_suit] + left + right))
                 if len(temp) >= 5:
                     s_f = self.straight_flush(temp)
                     if s_f:
                         return self.hand_rankings['SF'] + s_f
-                    #if len(right) and len(left):
-                        #return self.hand_rankings['F'] + right[0] if right[0] > left[0] else\
-                        #self.hand_rankings['F'] + left[0]
                     return self.hand_rankings['F'] + right[0] if right else\
                     self.hand_rankings['F'] + left[0]
 
             if self.flush_count == 5:
-                #FIVE FLUSH
                 right = [] if player.right_suit != self.flush_suit else [player.right_val]
                 left = [] if player.left_suit != self.flush_suit else [player.left_val]
-                temp = [i.value for i in self.community_cards if i.suit == self.flush_suit] + left + right
+                temp = list(set([i.value for i in self.community_cards if i.suit == self.flush_suit] + left + right))
                 temp.sort(reverse=True)
                 temp = temp[0] + temp[1] /10 + temp[2] /100 + temp[3] / 200 + temp[4] / 300
                 return self.hand_rankings['5F'] + temp
@@ -316,7 +309,6 @@ class Game:
 
     #just return the hand ranking if valid
     def straight_flush(self,hand):
-        temp = list(set(hand))
         hand.sort(reverse = True)
         if 14 == hand[0]:
             hand.append(1)
@@ -352,14 +344,3 @@ class Game:
 
     def hand_over(self,river=False):
         return sum(self.in_hand) == 1
-
-    '''
-    def get_player(self):
-        i = 0
-        while not self.in_hand[i]:
-            i+=1
-        return self.players[i]
-    '''
-
-        
-        
