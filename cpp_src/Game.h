@@ -39,6 +39,7 @@ public:
     void river();
     float high_card(Player player);
     bool hand_over();
+    void gameloop();
 private:
     int num_players;
     float bb;

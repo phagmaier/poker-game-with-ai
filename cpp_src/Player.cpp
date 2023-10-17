@@ -241,3 +241,9 @@ float Player::get_amount_to_win() {
 void Player::reduce_amount_to_win(float amount){
     amount_to_win -= amount;
 }
+
+std::ostream& operator<<(std::ostream& os, const Player& obj){
+    os << "LEFT CARD" << obj.left_val << obj.left_val << " "
+    << obj.right_val << obj.right_suit << "\n";
+    return os;
+}

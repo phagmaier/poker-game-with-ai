@@ -31,6 +31,7 @@ public:
     float get_amount_to_win();
     void reduce_amount_to_win(float amount);
     friend class Game;
+    friend std::ostream& operator<<(std::ostream& os, const Player& obj);
 private:
     Card hand1;
     Card hand2;

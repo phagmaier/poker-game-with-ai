@@ -1,0 +1,2 @@
+Need to create the reset functions for streets
+    both preflop reset and street reset

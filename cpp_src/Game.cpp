@@ -538,7 +538,7 @@ float Game::astraight(Player player) {
 
 void Game::flop(){
     std::tie(community_cards[0],community_cards[1],
-             community_cards[2])dealer.deal_flop();
+             community_cards[2]) = dealer.deal_flop();
 }
 void Game::turn(){
     community_cards[3] = dealer.deal_turn();
@@ -570,4 +570,50 @@ bool Game::hand_over(){
 
     }
     return false;
+}
+
+//Also need to check if hand is over if so
+//just go to preflop
+void Game::gameloop() {
+    std::cout << "PREFLOP\n";
+    preflop();
+    for (int i=0;i<num_players;++i){
+        std::cout << "Player " << i << "s hand\n";
+        std::cout << players[i];
+        std::cout << "\n";
+    }
+    street_preflop();
+    //call street_preflop reset (need to create this func)
+    flop();
+    //should make this a function
+    //just pass what street so the first line can say the X came:
+    for (int i=0;i<3;++i){
+        std::cout << "The flop came: ";
+        std::cout << community_cards[0].value << community_cards[0].suit;
+        std::cout << "  " << community_cards[1].value << community_cards[1].suit;
+        std::cout << "  " << community_cards[2].value << community_cards[2].suit << "\n";
+    }
+    street();
+    //call street reset
+    turn();
+
+    for (int i=0;i<4;++i){
+        std::cout << "The turn came: ";
+        std::cout << community_cards[0].value << community_cards[0].suit;
+        std::cout << "  " << community_cards[1].value << community_cards[1].suit;
+        std::cout << "  " << community_cards[2].value << community_cards[2].suit;
+        std::cout << "  " << community_cards[3].value << community_cards[3].suit << "\n";
+    }
+    street();
+    //call street reset
+    river();
+
+    street();
+    //Call street reset
+    //NEED A FUNCTION THAT GETS ALL PLAYERS STILL IN
+    //HAND AND GETS HAND STRENGTHS
+    //std::vector<std::tuple<int,std::tuple<float,std::string>>>
+    std::vector<std::tuple<int,std::tuple<float,std::string>>> end_players;
+    //end_players = get_hand_strength();
+    //payout() -> call with rsults hand strengths
 }
