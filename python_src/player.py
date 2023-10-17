@@ -101,10 +101,13 @@ class Player:
 		return True,temp,False,True, self.wagered, f"CALL {self.wagered}"
 
 	def all_in(self):
+		'''
 		if self.blind_adjustment and self.stack > self.bb:
 			self.amount_to_win += self.stack - (self.wagered + self.blind_adjustment)
 		else:
 			self.amount_to_win = self.stack - self.wagered
+		'''
+		self.amount_to_win = self.stack
 		temp = self.stack - self.wagered
 		self.wagered = self.stack
 		return True, temp, True,True, self.wagered, f"ALL IN FOR: {self.wagered}"
@@ -156,6 +159,7 @@ class Player:
 
 
 	def reset_street(self):
+		print('is this being called')
 		self.stack -= self.wagered
 		self.wagered = 0
 

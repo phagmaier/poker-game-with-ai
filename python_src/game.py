@@ -1,7 +1,6 @@
 '''
-THIS IS THE NEWEST VERSION
-Also for things like straight flush and straights need to remove pairs 
-so you need to use sets did this for straight flush i think need to do with the other
+OK THINK YOU CAN ONLY NOT PAYOUT BLINDS WHEN BOTH BLINDS PUT IN MONEY PREFLOP IF THEY DON'T OR IF 
+ONLY ONE DOES THAN ONLY THAT AMOUNT IS UP FOR GRABS
 '''
 import copy
 from dealer import Dealer
@@ -29,7 +28,6 @@ class Game:
         self.flush_suit = None
         self.sb_paid = 0
         self.bb_paid = 0
-        self.blind_payouts = True
         self.hand_rankings = {'SF':900,'Q':800,'FH':700,'F':600, '5F':500 ,'S':400,'T':300,
         'TP':200,'P':100,'H':0}
 
@@ -57,12 +55,18 @@ class Game:
     #Pretty sure this is working now needs more testing make same changes to non preflop
     #func
     def street_preflop(self):
+        print("Here are the current positions for players:")
+        print(f"UTG: {self.utg}")
+        print(f"SB: {self.sb_pos}")
+        print(f"BB: {self.bb_pos}")
         left_to_act = [True for _ in range(self.num_players)]
         total = 0
         prev_bet = 0
         current = self.utg
         min_bet = 2 * self.bb
         collect_sb = True
+        first_bb_action = True
+        edge_bb_raise_condition = False
         while sum(left_to_act)> 0:
             if not self.all_in[current] and self.in_hand[current]:
                 bet,self.all_in[current],self.in_hand[current],total,action_taken = \
@@ -71,22 +75,26 @@ class Game:
                 if collect_sb and current == self.sb_pos:
                     collect_sb = False
                     if bet:
-                        if bet >= self.sb:
-                            self.blinds += self.sb
-                        else:
+                        if total <= self.bb:
                             self.blinds += bet
+                        else:
+                            self.blinds -= self.sb
+                elif first_bb_action and current == self.bb_pos:
+                    if total >= min_bet:
+                        self.blinds -= self.bb
+                    first_bb_action = False
                 if total >= min_bet and total >= 2*prev_bet:
-                    self.blind_payouts = False
                     left_to_act = [self.in_hand[i] and not self.all_in[i] for i in range(self.num_players)]
                     prev_bet = total
 
                 self.pot += bet
                 left_to_act[current] = False
-
             print(f"The pot is: {self.pot}")
             current += 1 if current+1 < self.num_players else -current
 
     def street(self):
+        if sum(self.in_hand) == sum(self.all_in):
+            return
         left_to_act = [True for _ in range(self.num_players)]
         total = 0
         prev_bet = 0
@@ -137,14 +145,15 @@ class Game:
 
     def payout(self,players,multiple=False):
         print(f"pot size at the end: {self.pot}")
+        for i in range(self.num_players):
+            print(f"Amoutn player {i} can win is: {self.players[i].amount_to_win}")
         if not multiple:
             players.stack += self.pot
             return
             #return self.reset()
         player_bets = [player.amount_to_win for player in self.players]
         players_in_hand = sum(self.in_hand)
-        if self.blind_payouts:
-            self.payouts_blinds(players) #I'm HERE
+        self.payouts_blinds(players)
 
         while players_in_hand:
             #print([player_bets[i] for i,_ in players if self.in_hand[i]])
@@ -175,6 +184,7 @@ class Game:
     #you can actually win bb_paid and sb_paid depending on which is which and then you need to adjust
     #both of those
     def payouts_blinds(self,players):
+        print(f"On payout blinds and the blind payout amount is: {self.blinds}")
         sorted_players = sorted(players, key= lambda x: x[1][0], reverse=True)
         #i = sorted_players[0]
         for i,_ in sorted_players:
