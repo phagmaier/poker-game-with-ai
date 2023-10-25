@@ -1,7 +1,7 @@
 '''
-NOT DOING SOMETHING CORRECTLY BECAUSE IT'S Not UPDATING CORRECTLY
-YOU NEED TO PRINT THE UPDATED AND SEE HOW IT'S FUCKING UP BECAUSE CALLING
-IS SUCH A BAD PLAY AND IDK WHY IT'S NOT REDUCED MORE
+Ok The problem is you need to go through all the possabilties for the hero
+and also for the villian so you need to see what happens when they have a king their check frequency
+and then the total amount you win from all that
 '''
 
 import random
@@ -36,56 +36,52 @@ class Poker:
 
         # Need to get the odds first and then you'll do the actual ev
     def cfrm(self,hero,vill):
+        hero_strat = self.hero_strat[hero]
+        vill_strat = self.villian_strat[vill]
+        store_ev_vill = [0 for i in range(4)]
+        store_ev_hero = [0 for i in range(4)]
         if hero > vill:
-            check_check = self.hero_strat[hero][0] * self.villian_strat[vill][0]
-            bet_fold = self.hero_strat[hero][1] * self.villian_strat[vill][0]
-            bet_call = (self.hero_strat[hero][1] * self.villian_strat[vill][1])
-            #check_bet_fold = self.hero_strat[hero][0] * self.villian_strat[vill][1] * self.hero_strat[hero][0]
-            check_bet_fold = self.villian_strat[vill][1] * self.hero_strat[hero][0]
-            #check_bet_call = self.hero_strat[hero][0] * self.villian_strat[vill][1] * self.hero_strat[hero][1]
-            check_bet_call = self.villian_strat[vill][1] * self.hero_strat[hero][1]
+            #PAYOUTS HERO
+            check_check = 1
+            check_bet_fold = -1
+            check_bet_call = 2
+            bet_fold = 1
+            bet_call = 2
 
-            #NOW I'M JUST GETTING THE EV
-            ev_check_check = check_check * check_check
-            ev_bet_fold = bet_fold * bet_fold
-            ev_bet_call = (bet_call * bet_call) * 2
-            ev_check_bet_fold = -1* (check_bet_fold * check_bet_fold)
-            ev_check_bet_call = 2 * (check_bet_call * check_bet_call)
         else:
-            check_check = self.hero_strat[hero][0] * self.villian_strat[vill][0]
-            bet_fold = self.hero_strat[hero][1] * self.villian_strat[vill][0]
-            bet_call = self.hero_strat[hero][1] * self.villian_strat[vill][1]
-            #check_bet_fold = self.hero_strat[hero][0] * self.villian_strat[vill][1] * self.hero_strat[hero][0]
-            check_bet_fold = self.villian_strat[vill][1] * self.hero_strat[hero][0]
-            #check_bet_call = self.hero_strat[hero][0] * self.villian_strat[vill][1] * self.hero_strat[hero][1]
-            check_bet_call = self.villian_strat[vill][1] * self.hero_strat[hero][1]
+            check_check = -1
+            check_bet_fold = -1
+            check_bet_call = -2
+            bet_fold = 1
+            bet_call = -2
 
-            #NOW I'M JUST GETTING THE EV
-            ev_check_check = -1 * (check_check * check_check)
-            ev_bet_fold = bet_fold * bet_fold
-            ev_bet_call = -2 * (bet_call * bet_call)
-            ev_check_bet_fold = -1 * (check_bet_fold * check_bet_fold)
-            ev_check_bet_call = -2 * (check_bet_call * check_bet_call)
+        store_ev_hero[0] += (vill_strat[0] * check_check) + (vill_strat[1] * hero_strat[1] * check_bet_call)
+        store_ev_hero[0] += (vill_strat[1] * hero_strat[0] * check_bet_fold)
+        store_ev_hero[1] += (vill_strat[2] * bet_fold) + (vill_strat[3] * bet_call)
+        store_ev_hero[2] += hero_strat[2] * check_bet_fold
+        store_ev_hero[3] += hero_strat[3] * check_bet_call
 
-        #NOW I'M UPDATING THE CURRENT STRAT HAVE TO WAIT TO "PUBLISH" CHANGES FOR HERO
-        self.update(ev_check_check,ev_check_bet_fold,ev_check_bet_call,ev_bet_fold,ev_bet_call)
+        store_ev_vill[0] += vill_strat[0] * check_check * -1
+        store_ev_vill[1] += (hero_strat[2] * check_bet_fold * -1) + (hero_strat[3] * check_bet_call * -1)
+        store_ev_vill[2] += (vill_strat[2] * bet_call * -1)
+        store_ev_vill[3] += (vill_strat[3] * bet_fold * -1)
+
+        self.hero_updates[0] += store_ev_hero[0] - store_ev_hero[1]
+        self.hero_updates[1] += store_ev_hero[1] - store_ev_hero[0]
+        self.hero_updates[2] += store_ev_hero[2] - store_ev_hero[3]
+        self.hero_updates[3] += store_ev_hero[3] - store_ev_hero[2]
+
+        self.vill_updates[0] += store_ev_vill[0] - store_ev_vill[1]
+        self.vill_updates[1] += store_ev_vill[1] - store_ev_vill[0]
+        self.vill_updates[2] += store_ev_vill[2] - store_ev_vill[3]
+        self.vill_updates[3] += store_ev_vill[3] - store_ev_vill[2]
 
 
-    def update(self,check_check,check_bet_fold, check_bet_call,bet_fold, bet_call):
-        self.hero_updates[0] += (check_check + check_bet_fold + check_bet_call) - (bet_call + bet_fold)
-        self.hero_updates[1] += (bet_call + bet_fold) -  (check_check + check_bet_fold + check_bet_call)
-        self.hero_updates[2] += check_bet_fold - check_bet_fold
-        self.hero_updates[3] += check_bet_call - check_bet_call
 
-
-        self.vill_updates[0] += (-1 * check_check) - (-1 * (check_bet_call + check_bet_fold))
-        self.vill_updates[1] += (-1 * (check_bet_call + check_bet_fold)) - (-1 * check_check)
-        self.vill_updates[2] += (-1 * bet_fold) - (-1 * bet_call)
-        self.vill_updates[3] += (-1 * bet_call) - (-1 * bet_fold)
 
     def update_strat(self,arr,changes):
         for i in range(len(arr)):
-            arr[i] = min(1,max(0,arr[i]+changes[i]))
+            arr[i] = min(1,max(0.001,arr[i]+changes[i]))
             changes[i] = 0
         total1 = sum(arr[:2])
         total2 = sum(arr[2:])
