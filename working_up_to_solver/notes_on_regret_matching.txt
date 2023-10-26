@@ -1,0 +1,13 @@
+1. For each player, initialize all cumulative regrets to 0
+
+2. For some number of iterations:
+    - Compute a regret-matching strategy profile. (If all regrets for a player are non-positive, use
+a uniform random strategy.)
+
+    - Add the strategy profile to the strategy profile sum.
+    - Select each player action profile according the strategy profile.
+    - Compute player regrets.
+    - Add player regrets to player cumulative regrets.
+    - Return the average strategy profile, i.e. the strategy profile sum divided by the number of
+        iterations.
+
